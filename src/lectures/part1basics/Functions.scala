@@ -1,5 +1,7 @@
 package lectures.part1basics
 
+import scala.annotation.tailrec
+
 object Functions extends App {
   def aFunction(a: String, b: Int): String = {
     a + " " + b
@@ -55,6 +57,7 @@ object Functions extends App {
   println(factorial(10))
 
   // fibonacci
+  // fibonacci
   def fibonacci(n: Int): Int = {
     def fibPostive(n: Int): Int = {
       if (n <= 1) n else fibonacci(n - 1) + fibonacci(n - 2)
@@ -67,7 +70,6 @@ object Functions extends App {
       if (n % 2 == 0) -positiveResult else positiveResult
     }
   }
-
   // test if a number is prime
   def isPrime(n: Int): Boolean = {
     def isPrimeHelper(targetNum: Int, divisor: Int): Boolean = {
