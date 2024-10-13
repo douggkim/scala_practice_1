@@ -2,14 +2,14 @@ package exercises
 
 import scala.annotation.tailrec
 
-abstract class MyList {
-  def head: Int
+abstract class MyList[+A] {
+  def head: A
 
-  def tail: MyList
+  def tail: MyList[A]
 
   def isEmpty: Boolean
 
-  def add(element: Int): MyList
+  def add[B >: A](element: B): MyList[B]
 
   def printElements: String
 
@@ -17,29 +17,29 @@ abstract class MyList {
   override def toString: String = "[" + printElements + "]"
 }
 
-case object EmptyList extends MyList {
+case object EmptyList extends MyList[Nothing] {
   def head: Nothing = throw new NoSuchElementException
 
-  def tail: Nothing = throw new NoSuchElementException
+  def tail: MyList[Nothing] = throw new NoSuchElementException
 
   def isEmpty: Boolean = true
 
-  def add(element: Int): MyList = NonEmptyList(element, EmptyList)
+  def add[B >: Nothing](element: B): MyList[B] = NonEmptyList(element, EmptyList)
 
   def printElements: String = ""
 }
 
-case class NonEmptyList(h: Int, t: MyList) extends MyList {
-  def head: Int = h
+case class NonEmptyList[+A](h: A, t: MyList[A]) extends MyList[A] {
+  def head: A = h
 
-  def tail: MyList = t
+  def tail: MyList[A] = t
 
   def isEmpty: Boolean = false
 
-  def add(element: Int): MyList = NonEmptyList(element, this)
+  def add[B >: A](element: B): MyList[B] = NonEmptyList(element, this)
 
   @tailrec
-  private def printElementsTailRec(currentList: MyList, accumulator: String): String = currentList match {
+  private def printElementsTailRec[B >: A](currentList: MyList[B], accumulator: String): String = currentList match {
     case EmptyList => accumulator.trim
     case NonEmptyList(h, t) => printElementsTailRec(t, accumulator + h + " ")
   }
@@ -49,6 +49,11 @@ case class NonEmptyList(h: Int, t: MyList) extends MyList {
 }
 
 object ListTest extends App {
+  val listOfIntegers: MyList[Int] = new NonEmptyList[Int](1, new NonEmptyList[Int](2, new NonEmptyList[Int](3, EmptyList)))
+  val listOfStrings: MyList[String] = new NonEmptyList[String]("Hello", new NonEmptyList[String](("Scala"), EmptyList))
+
+  println(listOfIntegers.toString)
+  println(listOfStrings.toString)
   val oneElementList = NonEmptyList(1, EmptyList)
   println(oneElementList.head) // expected to print 1
   val list = NonEmptyList(1, NonEmptyList(2, NonEmptyList(3, EmptyList)))
