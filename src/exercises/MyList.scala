@@ -1,15 +1,8 @@
 package exercises
 
-abstract class MyList {
-  /*
-  * singly linked list
-  * head = first element of the list
-  * tail = remainder of the list
-  * is empty = is this list empty
-  * add(int) => a new list with this element added
-  * toSting (have to override) => a string representation of the list
-  *  */
+import scala.annotation.tailrec
 
+abstract class MyList {
   def head: Int
 
   def tail: MyList
@@ -20,45 +13,47 @@ abstract class MyList {
 
   def printElements: String
 
-  // polymorphic call
+  // Changed to use printElements without parameters
   override def toString: String = "[" + printElements + "]"
 }
 
-object emptyList extends MyList {
+case object EmptyList extends MyList {
+  def head: Nothing = throw new NoSuchElementException
 
-  override def head: Nothing = throw new NoSuchElementException // will throw Nothing Type
+  def tail: Nothing = throw new NoSuchElementException
 
-  override def tail: Nothing = throw new NoSuchElementException // will throw Nothing Type
+  def isEmpty: Boolean = true
 
-  override def isEmpty: Boolean = true
+  def add(element: Int): MyList = NonEmptyList(element, EmptyList)
 
-  override def printElements: String = ""
-
-  override def add(element: Int): MyList = new nonEmptyList(h = element, t = emptyList)
+  def printElements: String = ""
 }
 
-class nonEmptyList(h: Int, t: MyList) extends MyList {
+case class NonEmptyList(h: Int, t: MyList) extends MyList {
+  def head: Int = h
 
-  override def head: Int = h
+  def tail: MyList = t
 
-  override def tail: MyList = t
+  def isEmpty: Boolean = false
 
-  override def isEmpty: Boolean = false
+  def add(element: Int): MyList = NonEmptyList(element, this)
 
-  override def printElements: String = {
-    if (tail.isEmpty) "" + this.head
-    else this.head + " " + this.tail.printElements
+  @tailrec
+  private def printElementsTailRec(currentList: MyList, accumulator: String): String = currentList match {
+    case EmptyList => accumulator.trim
+    case NonEmptyList(h, t) => printElementsTailRec(t, accumulator + h + " ")
   }
 
-  override def add(element: Int): MyList = new nonEmptyList(h = element, t = this)
+  // Public method that initiates the tail recursion
+  def printElements: String = printElementsTailRec(this, "")
 }
 
 object ListTest extends App {
-  val oneElementList = new nonEmptyList(1, emptyList)
+  val oneElementList = NonEmptyList(1, EmptyList)
   println(oneElementList.head) // expected to print 1
-  val list = new nonEmptyList(1, new nonEmptyList(2, new nonEmptyList(3, emptyList)))
+  val list = NonEmptyList(1, NonEmptyList(2, NonEmptyList(3, EmptyList)))
   println(list.tail.head) // should see 2
   println(list.add(4).head) // should see 4
-  println(list.add(4).toString) // 4 1 2 3
-  println(list.isEmpty) // should element false
+  println(list.add(4).toString) // [4 1 2 3]
+  println(list.isEmpty) // should print false
 }
