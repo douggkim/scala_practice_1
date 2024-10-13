@@ -107,20 +107,20 @@ object Recursion extends App {
     else isPrimeHelper(n, 2)
   }
 
-  // 3. Fibonacci
-  // fibonacci
-  def fibonacci(n: Int): Int = {
-    @tailrec
-    def fibPositive(n: Int, nMinusOne: Int, nMinusTwo: Int): Int = {
-      if (n == 0) nMinusTwo
-      else if (n == 1) nMinusOne
-      else fibPositive(n - 1, nMinusOne + nMinusTwo, nMinusOne)
-    }
+      // 3. Fibonacci
+      // fibonacci
+      def fibonacci(n: Int): Int = {
+        @tailrec
+        def fibPositive(n: Int, nMinusOne: Int, nMinusTwo: Int): Int = {
+          if (n == 0) nMinusTwo
+          else if (n == 1) nMinusOne
+          else fibPositive(n - 1, nMinusOne + nMinusTwo, nMinusOne)
+        }
 
-    @tailrec
-    def fibNegative(n: Int, nMinusOne: Int, nMinusTwo: Int, isEven: Boolean): Int = {
-      if (n == 0) nMinusTwo
-      else if (n == -1) if (isEven) -nMinusOne else nMinusOne
+        @tailrec
+        def fibNegative(n: Int, nMinusOne: Int, nMinusTwo: Int, isEven: Boolean): Int = {
+          if (n == 0) nMinusTwo
+          else if (n == -1) if (isEven) -nMinusOne else nMinusOne
       else fibNegative(n + 1, nMinusTwo - nMinusOne, nMinusOne, !isEven)
     }
 
