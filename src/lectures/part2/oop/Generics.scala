@@ -81,6 +81,21 @@ object Generics extends App {
   // only cat or animal will work
   val cage2 = new CageSuperTypes(new Cat)
 
-  // expand MyList to be generic
+  /*
+  * 1. Generic trait MyPredicate[-T] with a little method test(T) => boolean
+  * 2. Generic trait MyTransformer[-A, B]: Converts A to B   with a method transform(A) => B
+  * 3. My List:
+  *   - map (transformer) => MyList
+  *   - filter(predicate) => MyList
+  *   - flatMap(transformer from A to MyList[B]) => MyList[B]
+  *
+  * - class EvenPredicate extends MyPredicate[Int]
+  * - class StringToIntTransformer extends MyTransformer[String, Int]
+  * [1,2,3].map(n * 2) = [2, 4, 6]
+  * [1,2,3,4].filter(n%2) = [2,4]
+  * [1,2,3].flatMap(n=> [n, n+1]) => [[1,2], [2,3], [3,4]]
+  *
+  *
+  * */
 
 }
