@@ -114,8 +114,8 @@ case class NonEmptyList[+A](h: A, t: MyList[A]) extends MyList[A] {
 }
 
 object ListTest extends App {
-  val listOfIntegers: MyList[Int] = new NonEmptyList[Int](1, new NonEmptyList[Int](2, new NonEmptyList[Int](3, EmptyList)))
-  val listOfStrings: MyList[String] = new NonEmptyList[String]("Hello", new NonEmptyList[String](("Scala"), EmptyList))
+  val listOfIntegers: MyList[Int] = NonEmptyList[Int](1, new NonEmptyList[Int](2, new NonEmptyList[Int](3, EmptyList)))
+  val listOfStrings: MyList[String] = NonEmptyList[String]("Hello", new NonEmptyList[String](("Scala"), EmptyList))
 
   println(listOfIntegers.toString)
   println(listOfStrings.toString)

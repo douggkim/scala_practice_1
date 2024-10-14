@@ -18,7 +18,7 @@ object Generics extends App {
   // generic type for maps
   class MyMap[Key, Value]
 
-  // A can be replaced by Int as blelow
+  // A can be replaced by Int as below
   val listOfIntegers = new MyList[Int]
   val listOfStrings = new MyList[String]
 
