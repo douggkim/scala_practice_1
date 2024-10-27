@@ -1,38 +1,43 @@
 package exercises
 
-abstract class Maybe2[+T] {
-  def map[B](f: T => B): Maybe2[B]
+abstract class Mock[+T] {
 
-  def flatMap[B](f: T => Maybe2[B]): Maybe2[B]
+  def map[B](f: T => B): Mock[B]
 
-  def filter(p: T => Boolean): Maybe2[T]
+  def flatMap[B](f: T => Mock[B]): Mock[B]
+
+  def filter(p: T => Boolean): Mock[T]
+
 }
 
-case object NotMaybe2 extends Maybe2[Nothing] {
-  def map[B](f: Nothing => B): Maybe2[B] = NotMaybe2
 
-  def flatMap[B](f: Nothing => Maybe2[B]): Maybe2[B] = NotMaybe2
+case object emptyMock extends Mock {
 
-  def filter(p: Nothing => Boolean): Maybe2[Nothing] = NotMaybe2
+
+  override def map[B](f: Nothing => B): Mock[B] = emptyMock
+
+  override def flatMap[B](f: Nothing => Mock[B]): Mock[B] = emptyMock
+
+  override def filter(p: Nothing => Boolean): Mock[Nothing] = emptyMock
 }
 
-case class Just2[+T](value: T) extends Maybe2[T] {
-  def map[B](f: T => B): Maybe2[B] = Just2(f(value))
+case class nonEmptyMock[+T](value: T) extends Mock[T] {
 
-  def flatMap[B](f: T => Maybe2[B]): Maybe2[B] = f(value)
+  override def map[B](f: T => B): Mock[B] = nonEmptyMock(f(value))
 
-  def filter(p: T => Boolean): Maybe2[T] =
+  override def flatMap[B](f: T => Mock[B]): Mock[B] = f(value)
+
+  override def filter(p: T => Boolean): Mock[T] =
     if (p(value)) this
-    else NotMaybe2
+    else emptyMock
 }
 
 
-object MaybeTest2 extends App {
-  val testJust = Just2(2)
-  println(testJust.filter(_ % 2 == 0))
+object mockTest extends App {
 
-  println(testJust.map(_ * 2))
-
-  println(testJust.flatMap(x => Just2(x)))
+  val testMock = nonEmptyMock(3)
+  println(testMock.map(x => x * 2))
+  println(testMock.filter(x => x %2 == 0 ))
+  println(testMock.flatMap(x => nonEmptyMock(x+1)))
 
 }
