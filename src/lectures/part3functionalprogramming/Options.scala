@@ -10,11 +10,22 @@ object Options extends App {
   println(myFirstOption)
   println(noOption)
 
+  // null safe way to process maps
+  val map = Map("key" -> "value")
+  map.get("key") // Some(value)
+  map.get("other") // None
+
+  val numbers = List(1, 2, 3)
+  numbers.headOption // Some(1)
+  numbers.find(_ % 2 == 0) // Some(2)
+
   // Options were designed to deal with unsafe APIs
+  // options: a wrapper for a value that might be present or not
   def unsafeMethod(): String = null
 
   val result = Some(unsafeMethod()) // WRONG -> Some might have null value
   // above breaks the whole point of having Options
+  // converts null to None automatically!!
   val result2 = Option(unsafeMethod()) // Some or None depending on whether this value is null or not
 
   println(result)
@@ -76,7 +87,7 @@ object Options extends App {
   *
   * return null
   * */
-  val connection = host.flatMap(h=> port.flatMap(p => Connection.apply(h,p)))
+  val connection = host.flatMap(h => port.flatMap(p => Connection.apply(h, p)))
   /* if (c != null)
         return c.connect
      else return null
@@ -94,7 +105,22 @@ object Options extends App {
   connectionStatus.foreach(println)
   // try to establish a connection, if so - print the connect method
 
+  // chained calls
+  // Why flatMap? Because config.get("port") returns Option[String]
+  // If we used map, we'd get Option[Option[String]]!
+  config.get("host")
+    .flatMap(host => config.get("port")
+      .flatMap(port => Connection(host, port))
+      .map(connection => connection.connect))
+    .foreach(println)
 
+  // for-comprehensions
+  val forConnectionStatus = for {
+    host <- config.get("host")
+    port <- config.get("port")
+    connection <- Connection(host, port)
+  } yield connection.connect
+  forConnectionStatus.foreach(println)
 
 
 }
